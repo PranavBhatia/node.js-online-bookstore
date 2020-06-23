@@ -9,7 +9,7 @@ const app = express();
 app.engine('hbs', expressHbs({
     extname: 'hbs',
     defaultLayout: false,
-    layoutsDir: 'views/layouts'
+    layoutsDir: path.join(__dirname, 'views', 'layouts')
 }));
 app.set('view engine', 'hbs');
 app.set('views', 'views');

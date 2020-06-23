@@ -1,2 +1,2 @@
 # node.js-online-shop
-A Node.js Online-Shop application.
+A Node.js Online Shopping application.

@@ -1,1 +1,8 @@
-[{"title":"a"},{"title":"wow"},{"title":"3"},{"title":"xc"}]
+[
+    {
+        "title": "Harry Potter and the Philosopher's Stone",
+        "imageUrl": "https://images-na.ssl-images-amazon.com/images/I/51UoqRAxwEL._SY445_QL70_ML2_.jpg",
+        "description": "Harry Potter and the Philosopher's Stone is a fantasy novel written by British author J. K. Rowling.",
+        "price": "21"
+    }
+]

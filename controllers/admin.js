@@ -45,4 +45,14 @@ exports.getEditProduct = (req, res, next) => {
       product,
     });
   });
+
+  exports.postEditProduct = (req, res, next) => {
+    Product.fetchAll((prods) => {
+      res.render("admin/products", {
+        prods,
+        pageTitle: "Admin Products",
+        path: "/admin/products",
+      });
+    });
+  };
 };

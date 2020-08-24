@@ -1,3 +1,5 @@
+const { get } = require("../routes/admin");
+
 const getDb = require("../util/database").getDb;
 
 class Product {
@@ -7,7 +9,15 @@ class Product {
     this.description = description;
     this.imageUrl = imageUrl;
   }
-  save() {}
+  save() {
+    const db = getDb();
+    db.collection("products")
+      .insertOne(this)
+      .then((result) => {
+        console.log(result);
+      })
+      .catch((err) => console.log(err));
+  }
 }
 
 module.exports = Product;

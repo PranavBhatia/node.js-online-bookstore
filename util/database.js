@@ -25,5 +25,5 @@ const getDb = () => {
   throw "No database found";
 };
 
-module.mongoConnect = mongoConnect;
-module.getDb = getDb;
+exports.mongoConnect = mongoConnect;
+exports.getDb = getDb;

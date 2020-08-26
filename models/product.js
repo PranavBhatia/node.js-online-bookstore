@@ -40,17 +40,31 @@ class Product {
       .catch((err) => console.log(err));
   }
 
-  static findById(prodId) {
+  static findById(productId) {
     const db = getDb();
     return db
       .collection("products")
-      .find({ _id: new mongodb.ObjectId(prodId) })
+      .find({ _id: new mongodb.ObjectId(productId) })
       .next()
       .then((product) => {
-        console.log(product);
         return product;
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+  static deleteById(productId) {
+    const db = getDb();
+    return db
+      .collection("products")
+      .deleteOne({ _id: new mongodb.ObjectId(productId) })
+      .then((result) => {
+        console.log("Deleted");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }
 }
 

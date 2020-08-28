@@ -25,7 +25,6 @@ app.use((req, res, next) => {
       next();
     })
     .catch((err) => console.log(err));
-  next();
 });
 
 app.use("/admin", adminRoutes);
@@ -34,7 +33,7 @@ app.use(shopRoutes);
 app.use(errorController.get404);
 
 mongoConnect(() => {
-  if (condition) {
-  }
+  // if (condition) {
+  // }
   app.listen(3000);
 });

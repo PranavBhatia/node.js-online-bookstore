@@ -1,8 +1,29 @@
-const { Sequelize } = require("sequelize");
+const MongoClient = require("mongodb").MongoClient;
+const username = "pranav_bhatia";
+const password = "eHurOLied8nZunkh";
+const dbname = "bookstoreDB";
+const uri = `mongodb+srv://${username}:${password}@cluster0.smq1g.mongodb.net/${dbname}?retryWrites=true&w=majority`;
 
-const sequelize = new Sequelize("node.js-online-shop", "root", "123456", {
-  dialect: "mysql",
-  host: "localhost",
-});
+let _db;
 
-module.exports = sequelize;
+const mongoConnect = (callback) => {
+  MongoClient.connect(uri, { useUnifiedTopology: true })
+    .then((client) => {
+      console.log("Connected");
+      _db = client.db();
+      callback();
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+const getDb = () => {
+  if (_db) {
+    return _db;
+  }
+  throw "No database found";
+};
+
+exports.mongoConnect = mongoConnect;
+exports.getDb = getDb;

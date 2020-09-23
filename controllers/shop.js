@@ -59,7 +59,6 @@ exports.getCart = (req, res, next) => {
 
 exports.postCart = (req, res, next) => {
   const prodId = req.body.productId;
-  console.log("prodId", req.body);
   Product.findById(prodId)
     .then((product) => {
       return req.user.addToCart(product);
@@ -84,7 +83,6 @@ exports.getOrders = (req, res, next) => {
   req.user
     .getOrders()
     .then((orders) => {
-      console.log(orders);
       res.render("shop/orders", {
         pageTitle: "Your Orders",
         path: "/orders",

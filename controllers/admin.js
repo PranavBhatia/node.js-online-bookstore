@@ -1,7 +1,8 @@
 const Product = require("../models/product");
 
 exports.getProducts = (req, res, next) => {
-  Product.fetchAll()
+  Product.find()
+    // .populate("userId")
     .then((products) => {
       res.render("admin/products", {
         prods: products,
@@ -25,18 +26,16 @@ exports.postAddProduct = (req, res, next) => {
   const imageUrl = req.body.imageUrl;
   const description = req.body.description;
   const price = req.body.price;
-  const product = new Product(
+  const product = new Product({
     title,
     price,
     description,
     imageUrl,
-    null,
-    req.user._id
-  );
+    userId: req.user, // mongoose will use the user._id automatically
+  });
   product
-    .save({ title, imageUrl, description, price })
+    .save()
     .then((result) => {
-      console.log("Product created");
       res.redirect("/admin/products");
     })
     .catch((err) => {
@@ -71,17 +70,16 @@ exports.postEditProduct = (req, res, next) => {
   const updatedImageUrl = req.body.imageUrl;
   const updatedDescription = req.body.description;
   const updatedPrice = req.body.price;
-  const product = new Product(
-    updatedTitle,
-    updatedPrice,
-    updatedDescription,
-    updatedImageUrl,
-    prodId
-  );
-  product
-    .save()
+
+  Product.findById(prodId)
+    .then((product) => {
+      product.title = updatedTitle;
+      product.price = updatedPrice;
+      product.description = updatedDescription;
+      product.imageUrl = updatedImageUrl;
+      return product.save();
+    })
     .then((result) => {
-      console.log("UPDATED PRODUCT!!!");
       res.redirect("/admin/products");
     })
     .catch((err) => console.log(err));
@@ -89,7 +87,7 @@ exports.postEditProduct = (req, res, next) => {
 
 exports.postDeleteProduct = (req, res, next) => {
   const prodId = req.body.productId;
-  Product.deleteById(prodId)
+  Product.findByIdAndRemove(prodId)
     .then(() => {
       console.log("DESTROYED PRODUCT");
       res.redirect("/admin/products");

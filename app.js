@@ -2,9 +2,9 @@ const path = require("path");
 
 const express = require("express");
 const bodyParser = require("body-parser");
+const mongoose = require("mongoose");
 
 const errorController = require("./controllers/error");
-const mongoConnect = require("./util/database").mongoConnect;
 const User = require("./models/user");
 
 const app = express();
@@ -19,9 +19,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use((req, res, next) => {
-  User.findById("5f471befd2222385b1caf4cd")
+  User.findById("5f5d97769b95076542f26cad")
     .then((user) => {
-      req.user = new User(user.name, user.email, user.cart, user._id);
+      req.user = user;
       next();
     })
     .catch((err) => console.log(err));
@@ -32,8 +32,27 @@ app.use(shopRoutes);
 
 app.use(errorController.get404);
 
-mongoConnect(() => {
-  // if (condition) {
-  // }
-  app.listen(3000);
-});
+const mongoConfigs = {
+  username: "pranav_bhatia",
+  password: "eHurOLied8nZunkh",
+  dbname: "bookstoreDB",
+};
+const uri = `mongodb+srv://${mongoConfigs.username}:${mongoConfigs.password}@cluster0.smq1g.mongodb.net/${mongoConfigs.dbname}?retryWrites=true&w=majority`;
+mongoose
+  .connect(uri)
+  .then((result) => {
+    User.findOne().then((user) => {
+      if (!user) {
+        const user = new User({
+          name: "PB",
+          email: "bhatiapranav1996@gmail.com",
+          cart: { items: [] },
+        });
+        user.save();
+      }
+    });
+    app.listen(3000);
+  })
+  .catch((err) => {
+    console.log(err);
+  });

@@ -41,7 +41,7 @@ const mongoConfigs = {
 };
 const uri = `mongodb+srv://${mongoConfigs.username}:${mongoConfigs.password}@cluster0.smq1g.mongodb.net/${mongoConfigs.dbname}?retryWrites=true&w=majority`;
 mongoose
-  .connect(uri)
+  .connect(uri, { useUnifiedTopology: true, useNewUrlParser: true })
   .then((result) => {
     User.findOne().then((user) => {
       if (!user) {

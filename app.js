@@ -40,15 +40,6 @@ app.use(
   })
 );
 
-app.use((req, res, next) => {
-  User.findById("5f5d97769b95076542f26cad")
-    .then((user) => {
-      req.user = user;
-      next();
-    })
-    .catch((err) => console.log(err));
-});
-
 app.use("/admin", adminRoutes);
 app.use(shopRoutes);
 app.use(authRoutes);
@@ -57,16 +48,16 @@ app.use(errorController.get404);
 mongoose
   .connect(MONGODB_URI, { useUnifiedTopology: true, useNewUrlParser: true })
   .then((result) => {
-    User.findOne().then((user) => {
-      if (!user) {
-        const user = new User({
-          name: "PB",
-          email: "bhatiapranav1996@gmail.com",
-          cart: { items: [] },
-        });
-        user.save();
-      }
-    });
+    // User.findOne().then((user) => {
+    //   if (!user) {
+    //     const user = new User({
+    //       name: "PB",
+    //       email: "bhatiapranav1996@gmail.com",
+    //       cart: { items: [] },
+    //     });
+    //     user.save();
+    //   }
+    // });
     app.listen(3000);
   })
   .catch((err) => {

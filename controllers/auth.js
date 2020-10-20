@@ -14,7 +14,11 @@ exports.postLogin = (req, res, next) => {
     .then((user) => {
       req.session.user = user;
       req.session.isLoggedIn = true;
-      res.redirect("/");
+      // So that the redirect triggers after the session is saved in the MongoDb =>
+      req.session.save((err) => {
+        console.log(err);
+        res.redirect("/");
+      });
     })
     .catch((err) => console.log(err));
 };

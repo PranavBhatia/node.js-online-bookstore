@@ -33,7 +33,7 @@ exports.postAddProduct = (req, res, next) => {
     price,
     description,
     imageUrl,
-    userId: req.session.user, // mongoose will use the user._id automatically
+    userId: req.user, // mongoose will use the user._id automatically
   });
   product
     .save()

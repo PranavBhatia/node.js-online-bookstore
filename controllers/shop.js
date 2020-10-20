@@ -46,7 +46,6 @@ exports.getIndex = (req, res, next) => {
 };
 
 exports.getCart = (req, res, next) => {
-  debugger;
   req.session.user
     .populate("cart.items.productId")
     .execPopulate()

@@ -3,32 +3,60 @@ const bcrypt = require("bcryptjs");
 const User = require("../models/user");
 
 exports.getLogin = (req, res, next) => {
-  console.log(req.session.isLoggedIn);
+  let message = req.flash("error");
+  if (message.length) {
+    message = message[0];
+  } else {
+    message = null;
+  }
   res.render("auth/login", {
     pageTitle: "Login",
     path: "/login",
-    isAuthenticated: false,
+    errorMessage: message,
   });
 };
 
 exports.getSignup = (req, res, next) => {
+  let message = req.flash("error");
+  if (message.length) {
+    message = message[0];
+  } else {
+    message = null;
+  }
   res.render("auth/signup", {
     path: "/signup",
     pageTitle: "Signup",
-    isAuthenticated: false,
+    errorMessage: message,
   });
 };
 
 exports.postLogin = (req, res, next) => {
-  User.findById("5f5d97769b95076542f26cad")
+  const { email, password } = req.body;
+  User.findOne({ email })
     .then((user) => {
-      req.session.user = user;
-      req.session.isLoggedIn = true;
-      // So that the redirect triggers after the session is saved in the MongoDb =>
-      req.session.save((err) => {
-        console.log(err);
-        res.redirect("/");
-      });
+      if (!user) {
+        req.flash("error", "Invalid email.");
+        return res.redirect("/login");
+      }
+      bcrypt
+        .compare(password, user.password)
+        .then((doMatch) => {
+          if (doMatch) {
+            req.session.user = user;
+            req.session.isLoggedIn = true;
+            return req.session.save((err) => {
+              console.log(err);
+              res.redirect("/");
+            });
+          }
+          req.flash("error", "Invalid password.");
+          res.redirect("/login");
+        })
+        .catch((err) => {
+          console.log(err);
+          req.flash("error", "Bcrypt comparison failed.");
+          res.redirect("/login");
+        });
     })
     .catch((err) => console.log(err));
 };
@@ -38,19 +66,21 @@ exports.postSignup = (req, res, next) => {
   User.findOne({ email })
     .then((userDocument) => {
       if (userDocument) {
+        req.flash("error", "E-mail already exists, please pick another one");
         return res.redirect("/signup");
       }
-      return bcrypt.hash(password, 12);
+      return bcrypt
+        .hash(password, 12)
+        .then((hashedPassword) => {
+          const user = new User({
+            email,
+            password: hashedPassword,
+            cart: { items: [] },
+          });
+          return user.save();
+        })
+        .then((result) => res.redirect("/login"));
     })
-    .then((hashedPassword) => {
-      const user = new User({
-        email,
-        password: hashedPassword,
-        cart: { items: [] },
-      });
-      return user.save();
-    })
-    .then((result) => res.redirect("/login"))
     .catch((err) => console.log(err));
 };
 

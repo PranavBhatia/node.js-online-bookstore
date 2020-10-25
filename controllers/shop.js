@@ -106,7 +106,7 @@ exports.postOrder = (req, res, next) => {
       const order = new Order({
         products,
         user: {
-          name: user.name,
+          email: req.user.email,
           userId: user, // It will extract the _id automatically
         },
       });

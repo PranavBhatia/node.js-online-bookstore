@@ -17,9 +17,16 @@ exports.getLogin = (req, res, next) => {
 };
 
 exports.getSignup = (req, res, next) => {
+  let message = req.flash("error");
+  if (message.length) {
+    message = message[0];
+  } else {
+    message = null;
+  }
   res.render("auth/signup", {
     path: "/signup",
     pageTitle: "Signup",
+    errorMessage: message,
   });
 };
 
@@ -28,7 +35,7 @@ exports.postLogin = (req, res, next) => {
   User.findOne({ email })
     .then((user) => {
       if (!user) {
-        req.flash("error", "Invalid email or password");
+        req.flash("error", "Invalid email.");
         return res.redirect("/login");
       }
       bcrypt
@@ -42,10 +49,12 @@ exports.postLogin = (req, res, next) => {
               res.redirect("/");
             });
           }
+          req.flash("error", "Invalid password.");
           res.redirect("/login");
         })
         .catch((err) => {
           console.log(err);
+          req.flash("error", "Bcrypt comparison failed.");
           res.redirect("/login");
         });
     })
@@ -57,6 +66,7 @@ exports.postSignup = (req, res, next) => {
   User.findOne({ email })
     .then((userDocument) => {
       if (userDocument) {
+        req.flash("error", "E-mail already exists, please pick another one");
         return res.redirect("/signup");
       }
       return bcrypt

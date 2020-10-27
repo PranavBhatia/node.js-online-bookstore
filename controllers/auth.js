@@ -145,7 +145,7 @@ exports.postReset = (req, res, next) => {
         return user.save();
       })
       .then((result) => {
-        return transporter.sendMail({
+        transporter.sendMail({
           to: req.body.email,
           from: "coolpranav11@gmail.com", //pb@node-bookstore.com
           subject: "Bookstore password reset",

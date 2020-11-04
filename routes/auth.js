@@ -25,6 +25,12 @@ router.post(
   body("password", "Please enter an alphanumeric with atleast 5 characters.")
     .isLength({ min: 5 })
     .isAlphanumeric(),
+  body("confirmPassword").custom((input, { req }) => {
+    if (input !== req.body.password) {
+      throw new Error("Password and Confirm Password do not match!");
+    }
+    return true;
+  }),
   authController.postSignup
 );
 

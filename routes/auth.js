@@ -1,5 +1,5 @@
 const express = require("express");
-const { check } = require("express-validator");
+const { check, body } = require("express-validator");
 
 const authController = require("../controllers/auth");
 
@@ -22,6 +22,9 @@ router.post(
       }
       return true;
     }),
+  body("password", "Please enter an alphanumeric with atleast 5 characters.")
+    .isLength({ min: 5 })
+    .isAlphanumeric(),
   authController.postSignup
 );
 

@@ -87,33 +87,25 @@ exports.postSignup = (req, res, next) => {
       errorMessage: errors.array()[0].msg,
     });
   }
-  User.findOne({ email })
-    .then((userDocument) => {
-      if (userDocument) {
-        req.flash("error", "E-mail already exists, please pick another one");
-        return res.redirect("/signup");
-      }
-      return bcrypt
-        .hash(password, 12)
-        .then((hashedPassword) => {
-          const user = new User({
-            email,
-            password: hashedPassword,
-            cart: { items: [] },
-          });
-          return user.save();
-        })
-        .then((result) => {
-          res.redirect("/login");
-          return transporter.sendMail({
-            to: email,
-            from: "coolpranav11@gmail.com", //pb@node-bookstore.com
-            subject: "Welcome to the best bookstore!",
-            html:
-              "<h1>You are now a memeber of the best bookstore in the world! Cheers.</h1>",
-          });
-        })
-        .catch((err) => console.log(err));
+  bcrypt
+    .hash(password, 12)
+    .then((hashedPassword) => {
+      const user = new User({
+        email,
+        password: hashedPassword,
+        cart: { items: [] },
+      });
+      return user.save();
+    })
+    .then((result) => {
+      res.redirect("/login");
+      return transporter.sendMail({
+        to: email,
+        from: "coolpranav11@gmail.com", //pb@node-bookstore.com
+        subject: "Welcome to the best bookstore!",
+        html:
+          "<h1>You are now a memeber of the best bookstore in the world! Cheers.</h1>",
+      });
     })
     .catch((err) => console.log(err));
 };

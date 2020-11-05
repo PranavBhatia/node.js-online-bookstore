@@ -11,10 +11,14 @@ router.get("/login", authController.getLogin);
 router.post(
   "/login",
   [
-    body("email").isEmail().withMessage("Please enter a valid email."),
+    body("email")
+      .isEmail()
+      .withMessage("Please enter a valid email.")
+      .normalizeEmail(),
     body("password", "Please enter an alphanumeric with atleast 5 characters.")
       .isLength({ min: 5 })
-      .isAlphanumeric(),
+      .isAlphanumeric()
+      .trim(),
   ],
   authController.postLogin
 );
@@ -26,6 +30,7 @@ router.post(
   check("email")
     .isEmail()
     .withMessage("Please enter a valid email.")
+    .normalizeEmail()
     .custom((input, { req }) => {
       //   if (input === "test@test.com") {
       //     throw new Error("This is a forbidden email address!");
@@ -40,14 +45,17 @@ router.post(
       });
     }),
   body("password", "Please enter an alphanumeric with atleast 5 characters.")
+    .trim()
     .isLength({ min: 5 })
     .isAlphanumeric(),
-  body("confirmPassword").custom((input, { req }) => {
-    if (input !== req.body.password) {
-      throw new Error("Password and Confirm Password do not match!");
-    }
-    return true;
-  }),
+  body("confirmPassword")
+    .trim()
+    .custom((input, { req }) => {
+      if (input !== req.body.password) {
+        throw new Error("Password and Confirm Password do not match!");
+      }
+      return true;
+    }),
   authController.postSignup
 );
 

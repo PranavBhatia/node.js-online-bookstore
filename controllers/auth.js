@@ -28,6 +28,8 @@ exports.getLogin = (req, res, next) => {
     pageTitle: "Login",
     path: "/login",
     errorMessage: message,
+    oldInput: { email: "", password: "" },
+    validationErrors: [],
   });
 };
 
@@ -41,14 +43,21 @@ exports.postLogin = (req, res, next) => {
       pageTitle: "Login",
       path: "/login",
       errorMessage: errors.array()[0].msg,
+      oldInput: { email, password },
+      validationErrors: errors.array(),
     });
   }
 
   User.findOne({ email })
     .then((user) => {
       if (!user) {
-        req.flash("error", "Invalid email.");
-        return res.redirect("/login");
+        return res.status(422).render("auth/login", {
+          pageTitle: "Login",
+          path: "/login",
+          errorMessage: "Invalid email.",
+          oldInput: { email, password },
+          validationErrors: [],
+        });
       }
       bcrypt
         .compare(password, user.password)
@@ -61,13 +70,23 @@ exports.postLogin = (req, res, next) => {
               res.redirect("/");
             });
           }
-          req.flash("error", "Invalid password.");
-          res.redirect("/login");
+          return res.status(422).render("auth/login", {
+            pageTitle: "Login",
+            path: "/login",
+            errorMessage: "Invalid password.",
+            oldInput: { email, password },
+            validationErrors: [],
+          });
         })
         .catch((err) => {
           console.log(err);
-          req.flash("error", "Bcrypt comparison failed.");
-          res.redirect("/login");
+          return res.status(422).render("auth/login", {
+            pageTitle: "Login",
+            path: "/login",
+            errorMessage: "Bcrypt comparison failed.",
+            oldInput: { email, password },
+            validationErrors: [],
+          });
         });
     })
     .catch((err) => console.log(err));

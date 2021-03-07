@@ -54,7 +54,7 @@ const adminRoutes = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
 const authRoutes = require("./routes/auth");
 
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(multer({ storage: fileStorageConfig, fileFilter }).single("image"));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(

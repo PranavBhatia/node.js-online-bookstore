@@ -2,6 +2,8 @@ function deleteProduct(button) {
   const productId = button.parentNode.querySelector("[name=productId]").value;
   const csrf = button.parentNode.querySelector("[name=_csrf]").value;
 
+  const productElement = button.closest("article");
+
   fetch("/admin/product/" + productId, {
     method: "DELETE",
     headers: {
@@ -9,7 +11,11 @@ function deleteProduct(button) {
     },
   })
     .then((result) => {
-      console.log(result);
+      return result.json();
+    })
+    .then((data) => {
+      console.log(data);
+      productElement.remove();
     })
     .catch((err) => {
       console.log(err);
